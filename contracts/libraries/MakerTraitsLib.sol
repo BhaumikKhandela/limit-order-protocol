@@ -12,7 +12,7 @@ type MakerTraits is uint256;
  * High bits are used for flags
  * 255 bit `NO_PARTIAL_FILLS_FLAG`          - if set, the order does not allow partial fills
  * 254 bit `ALLOW_MULTIPLE_FILLS_FLAG`      - if set, the order permits multiple fills
- * 253 bit                                  - unused
+ * 253 bit  `NON_EVM_SWAP`                  - if set, the order is a non-EVM swap
  * 252 bit `PRE_INTERACTION_CALL_FLAG`      - if set, the order requires pre-interaction call
  * 251 bit `POST_INTERACTION_CALL_FLAG`     - if set, the order requires post-interaction call
  * 250 bit `NEED_CHECK_EPOCH_MANAGER_FLAG`  - if set, the order requires to check the epoch manager
@@ -38,6 +38,7 @@ library MakerTraitsLib {
 
     uint256 private constant _NO_PARTIAL_FILLS_FLAG = 1 << 255;
     uint256 private constant _ALLOW_MULTIPLE_FILLS_FLAG = 1 << 254;
+    uint256 private constant _NON_EVM_SWAP_FLAG = 1 << 253;
     uint256 private constant _PRE_INTERACTION_CALL_FLAG = 1 << 252;
     uint256 private constant _POST_INTERACTION_CALL_FLAG = 1 << 251;
     uint256 private constant _NEED_CHECK_EPOCH_MANAGER_FLAG = 1 << 250;
@@ -178,4 +179,14 @@ library MakerTraitsLib {
     function unwrapWeth(MakerTraits makerTraits) internal pure returns (bool) {
         return MakerTraits.unwrap(makerTraits) & _UNWRAP_WETH_FLAG != 0;
     }
+
+    /**
+     * @notice Checks if the swap is a non-EVM swap.
+     * @param makerTraits The traits of the maker.
+     * @return result A boolean indicating whether the swap is a non-EVM swap.
+     */
+    function isNonEvmSwap(MakerTraits makerTraits) internal pure returns (bool) {
+        return MakerTraits.unwrap(makerTraits) & _NON_EVM_SWAP_FLAG != 0;
+    }
 }
+
